@@ -5,6 +5,7 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * Rhaspi Image herunter laden.
 * https://learn.adafruit.com/adafruit-neopixel-uberguide
 * Python3 installieren: sudo apt install python3
+* GIT installieren: sudo apt install git
 
 # Verdrahtung
 * ...
