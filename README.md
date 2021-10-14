@@ -25,3 +25,4 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 # Verdrahtung
 * Rhaspi mit Neopixel: https://learn.adafruit.com/neopixels-on-raspberry-pi/raspberry-pi-wiring
 * Detail gross: https://learn.adafruit.com/assets/64121
+* BoxTec Level Konverter: https://shop.boxtec.ch/logic-level-converter-directional-p-41728.html
