@@ -8,7 +8,8 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * GIT installieren: `sudo apt install git`
 
 # Adafruit
-* Board aufsetzen: https://learn.adafruit.com/adafruit-neopixel-uberguide/python-circuitpython
+* Tutorial von Adafruit: https://learn.adafruit.com/adafruit-neopixel-uberguide
+* Speziell Board aufsetzen: https://learn.adafruit.com/adafruit-neopixel-uberguide/python-circuitpython
 * Neopixel Library installieren: `sudo pip3 install adafruit-circuitpython-neopixel`
 
 # Webserver
@@ -22,5 +23,5 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * Beispiel: https://www.tutorialspoint.com/python/python_multithreading.htm
 
 # Verdrahtung
-* ...
-}
+* Rhaspi mit Neopixel: https://learn.adafruit.com/neopixels-on-raspberry-pi/raspberry-pi-wiring
+* Detail gross: https://learn.adafruit.com/assets/64121
