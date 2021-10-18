@@ -13,6 +13,7 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * Neopixel Library installieren: `sudo pip3 install adafruit-circuitpython-neopixel`
 * CircuitPython: https://circuitpython.readthedocs.io/en/latest/docs/index.html
 * CircuitPython Neopixel: https://circuitpython.readthedocs.io/projects/neopixel/en/latest/index.html
+* CircuitPython DigitalIO: https://circuitpython.readthedocs.io/en/7.0.x/shared-bindings/digitalio/index.html#digitalio.DigitalInOut
 * CircuitPython Library: https://learn.adafruit.com/circuitpython-led-animations (nicht sicher, ob das für's Rhaspi ist...)
 
 # Webserver
