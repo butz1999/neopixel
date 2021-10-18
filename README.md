@@ -9,6 +9,7 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 
 # Adafruit
 * Tutorial von Adafruit: https://learn.adafruit.com/adafruit-neopixel-uberguide
+* Adafruit CircuitPython Essentials: https://learn.adafruit.com/circuitpython-essentials
 * Speziell Board aufsetzen: https://learn.adafruit.com/adafruit-neopixel-uberguide/python-circuitpython
 * Neopixel Library installieren: `sudo pip3 install adafruit-circuitpython-neopixel`
 * CircuitPython: https://circuitpython.readthedocs.io/en/latest/docs/index.html
