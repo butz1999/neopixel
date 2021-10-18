@@ -8,7 +8,7 @@ def webserver(name, outqueue):
 	while True:
 		# Produce some data
 		outqueue.put(copy.deepcopy(time.time()))
-		time.sleep(0.1)
+		time.sleep(0.9)
 		
 # A thread that consumes data
 def ledhandler(name, inqueue):

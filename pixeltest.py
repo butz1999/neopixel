@@ -7,14 +7,16 @@ pixels = neopixel.NeoPixel(board.D18, 64)
 
 #farben = [ (50,10,20), (5,30,35), (0,0,50), (50,50,0), (0,50,50), (50,0,50)]
 farben = [
+	(0,0,0),		#off
 	(255,200,0),	#gelb
 	(255,120,0), 	#orange
 	(180,0,0),		#rot
 	(80,0,80),		#violett
 	(20,20,80),		#blau
 	(80,80,160),	#hellblau
-	(180,255,80), 	#stahlblau
-	(30,255,10) ]
+	(180,120,255), 	#stahlblau
+	(30,255,10),	#hellgrün
+	(0,40,0) ]		#dunkelgrün
 
 def zufallsfarben():
 	for i in range(1000):

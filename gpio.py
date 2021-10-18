@@ -2,11 +2,24 @@ import board
 import digitalio
 import neopixel
 import time
+from random import *
 
 led = digitalio.DigitalInOut(board.D23)
 led.direction = digitalio.Direction.OUTPUT
 
 pixels = neopixel.NeoPixel(board.D18, 64)
+
+farben = [
+	(0,0,0),		# 0: off
+	(255,200,0),	# 1: gelb
+	(255,120,0), 	# 2: orange
+	(180,0,0),		# 3: rot
+	(80,0,80),		# 4: violett
+	(20,20,80),		# 5: blau
+	(80,80,160),	# 6: hellblau
+	(180,120,255), 	# 7: stahlblau
+	(30,255,10),	# 8: hellgrün
+	(0,40,0) ]		# 9: dunkelgrün
 
 def on(pixels, index, color):
 	pixels[index] = color
@@ -45,11 +58,32 @@ def fade(pixels, start, end, duration):
 		pixels.fill(col)
 		time.sleep(duration/steps)
 	pixels.fill(end)
-	time.sleep(duration/steps)
+	#time.sleep(duration/steps)
+	#time.sleep(0)
 
+def blink():
+	while True:
+		led.value = True
+		pixels.fill((10,0,0))
+		time.sleep(0.5)
+		led.value = False
+		pixels.fill((0,0,0))
+		time.sleep(0.5)
 
-fade(pixels, (0,0,0), (255,0,0) , 0.5)
-fade(pixels, (255,0,0), (0,0,0), 0.5)
+von = farben[randint(1,len(farben)-1)]
+bis = farben[randint(1,len(farben)-1)]
+off = farben[0]
+
+fade(pixels, off, von , 0.25)
+time.sleep(1)
+fade(pixels, von, off, 0.25)
+fade(pixels, off, bis, 0.25)
+time.sleep(1)
+fade(pixels, bis, (0,0,0), 0.25)
+#time.sleep(1)
+#fade(pixels, (255,0,0), (0,255,0), 0.5)
+#fade(pixels, (0,255,0), (0,0,255), 0.5)
+#fade(pixels, (0,0,255), (0,0,0), 0.5)
 
 #for i in range(64):
 #	on(pixels, i, (255,255,255) )
@@ -59,10 +93,6 @@ fade(pixels, (255,0,0), (0,0,0), 0.5)
 
 #pixels.fill((1,0,0))
 
-while True:
-	led.value = True
-	pixels.fill((10,0,0))
-	time.sleep(0.5)
-	led.value = False
-	pixels.fill((0,0,0))
-	time.sleep(0.5)
+#blink()
+
+print (len(farben))
