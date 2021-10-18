@@ -62,9 +62,9 @@ def alle_farben():
 		time.sleep(1)
 
 	
-#zufallsfarben()
+zufallsfarben()
 #dimmen()
-alle_farben()
+#alle_farben()
 
 
 pixels.fill((0,0,0))
