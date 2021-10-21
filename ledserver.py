@@ -41,7 +41,7 @@ class LedServer():
 		self.state = states["off"]
 		self.runner = Thread(target = self.run)
 		self.runner.start()
-		self.count = 16
+		self.count = 10
 		self.intervall = 4
 
 	
@@ -55,7 +55,7 @@ class LedServer():
 				again = True
 			if (self.state != oldstate or again):
 				oldstate = self.state
-				oldtime = time.time()
+				
 				again = False
 				if (self.state == states["off"]):
 					self.neu = [(0,0,0)] * 64
@@ -64,28 +64,44 @@ class LedServer():
 					self.zufall(self.count)
 					self.fade()
 				if (self.state == states["user"]):
+					self.farbauswahl( farben["blue"], 64-self.count)
+					self.fade(0)
 					self.farbauswahl( farben["blue"], self.count)
-					self.fade()
+					self.fade(0)
+					self.intervall = 1.5
 				if (self.state == states["setup"]):
 					self.farbauswahl( farben["violet"], self.count)
 					self.fade()
+					self.intervall = 4
 				if (self.state == states["ok"]):
 					self.farbauswahl( farben["green"], self.count)
 					self.fade()
+					self.intervall = 4
 				if (self.state == states["warning"]):
 					self.farbauswahl( farben["yellow"], self.count)
 					self.fade()
+					self.intervall = 4
 				if (self.state == states["error"]):
-					self.farbauswahl( farben["red"], self.count)
-					self.fade()
-				if (self.state == states["pos"]):
-					self.neu = [ farben["green"] ] * 64
+					self.farbauswahl( farben["red"], 64-self.count)
 					self.fade(0)
+					self.farbauswahl( farben["red"], self.count)
+					self.fade(0)
+					self.intervall = 1.5
+				if (self.state == states["pos"]):
+					self.farbauswahl( farben["green"], 64-self.count )
+					self.fade(0)
+					self.farbauswahl( farben["green"], self.count )
+					self.fade(0)
+					oldstate = states["ok"]
 					self.state = states["ok"]
 				if (self.state == states["neg"]):
-					self.neu = [ farben["yellow"] ] * 64
+					self.farbauswahl( farben["yellow"], 64-self.count )
 					self.fade(0)
+					self.farbauswahl( farben["yellow"], self.count )
+					self.fade(0)
+					oldstate = states["warning"]
 					self.state = states["warning"]
+				oldtime = time.time()
 			time.sleep(0.01)
 		
 	def zeige(self, aktuell):
@@ -109,7 +125,7 @@ class LedServer():
 		return (start_r+step_r, start_g+step_g, start_b+step_b)
 
 	def fade(self, dauer = 0.5):
-		steps = 24
+		steps = 16
 		jetzt = [ (0,0,0) ] * 64
 		self.zeige(self.alt)
 		time.sleep(dauer/steps)
@@ -166,7 +182,6 @@ class LedServer():
 	
 	def test(self, args):
 		self.state = states["test"]
-		print("test: ", args)
 		if (args.find("off") != -1):
 			self.off()
 		else:

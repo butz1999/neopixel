@@ -20,7 +20,7 @@ farben = {
 	}
 
 serverPort = 8080
-hostName = "localhost"
+hostName = ""
 
 cmdQueue = Queue()
 
