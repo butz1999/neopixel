@@ -24,6 +24,9 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 # Kommunikation
 * ZMQ: https://zeromq.org/languages/python/
 
+# Autostart
+* Start als Service: https://raspberrypi.stackexchange.com/questions/4123/running-a-python-script-at-startup
+
 # Multithreading
 * Beispiel: https://www.tutorialspoint.com/python/python_multithreading.htm
 
