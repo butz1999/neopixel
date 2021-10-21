@@ -3,21 +3,34 @@ import digitalio
 import neopixel
 import time
 import sys
-from random import *
+from random	import *
+from queue	import Queue
+from threading		import Thread
 
 farben = {
-	"aus":      (0,0,0),
-	"weiss":	(255,255,255),
-	"gelb":		(255,200,0),
-	"orange":	(200,50,00),
-	"rot":		(255,0,0),
-	"violett":	(70,0,50),
-#	"blau":		(0,0,50),
-	"hellblau":	(30,30,230),
-#	"grün":		(0,40,0),
-	"hellgrün":	(30,255,10),
+	"off":      	(0,0,0),
+	"white":		(255,255,255),
+	"yellow":		(180,180,0),
+	"orange":		(200,50,00),
+	"red":			(255,0,0),
+	"violet":		(180,0,180),
+	"blue":			(0,0,255),
+	"lightblue":	(30,160,160),
+	"green":		(10,255,10),
 	}
 
+states = {
+	"off":		1,
+	"idle":     2,
+	"user":		3,
+	"setup":	4,
+	"ok":		5,
+	"warning":	6,
+	"error":	7,
+	"pos":		8,
+	"neg":	    9,
+	"test":		10,
+	}
 
 class LedServer():
 	def __init__(self):
@@ -25,6 +38,55 @@ class LedServer():
 		self.pixels = neopixel.NeoPixel(board.D18, 64, bpp=3, brightness=1.0, auto_write=False, pixel_order=neopixel.GRB)
 		self.neu = [(0,0,0)] * 64
 		self.alt = [(0,0,0)] * 64
+		self.state = states["off"]
+		self.runner = Thread(target = self.run)
+		self.runner.start()
+		self.count = 16
+		self.intervall = 4
+
+	
+	def run(self):
+		oldstate = states["off"]
+		oldtime = time.time()
+		self.off()
+		again = False
+		while True:
+			if (time.time() > oldtime + self.intervall):
+				again = True
+			if (self.state != oldstate or again):
+				oldstate = self.state
+				oldtime = time.time()
+				again = False
+				if (self.state == states["off"]):
+					self.neu = [(0,0,0)] * 64
+					self.fade()
+				if (self.state == states["idle"]):
+					self.zufall(self.count)
+					self.fade()
+				if (self.state == states["user"]):
+					self.farbauswahl( farben["blue"], self.count)
+					self.fade()
+				if (self.state == states["setup"]):
+					self.farbauswahl( farben["violet"], self.count)
+					self.fade()
+				if (self.state == states["ok"]):
+					self.farbauswahl( farben["green"], self.count)
+					self.fade()
+				if (self.state == states["warning"]):
+					self.farbauswahl( farben["yellow"], self.count)
+					self.fade()
+				if (self.state == states["error"]):
+					self.farbauswahl( farben["red"], self.count)
+					self.fade()
+				if (self.state == states["pos"]):
+					self.neu = [ farben["green"] ] * 64
+					self.fade(0)
+					self.state = states["ok"]
+				if (self.state == states["neg"]):
+					self.neu = [ farben["yellow"] ] * 64
+					self.fade(0)
+					self.state = states["warning"]
+			time.sleep(0.01)
 		
 	def zeige(self, aktuell):
 		for i in range(len(aktuell)):
@@ -46,9 +108,8 @@ class LedServer():
 		
 		return (start_r+step_r, start_g+step_g, start_b+step_b)
 
-	def fade(self):
-		dauer = 1
-		steps = 32
+	def fade(self, dauer = 0.5):
+		steps = 24
 		jetzt = [ (0,0,0) ] * 64
 		self.zeige(self.alt)
 		time.sleep(dauer/steps)
@@ -59,6 +120,21 @@ class LedServer():
 			time.sleep(dauer/steps)
 		self.zeige(self.neu)
 		self.alt = self.neu.copy()
+		
+	def farbauswahl(self, farbe, anzahl):
+		self.neu = [(0,0,0)] * 64
+		gefunden = 0
+		fehler = 0
+		while (gefunden < anzahl):
+			i = randint(0,63)
+			if ((self.neu[i][0] == 0) and (self.neu[i][1] == 0) and (self.neu[i][2] == 0)):
+				self.neu[i] = farbe
+				gefunden += 1
+			else:
+				fehler += 1
+				if (fehler > 1000):
+					break
+		self.fade()
 
 	def zufall(self,anzahl):
 		self.neu = [(0,0,0)] * 64
@@ -67,7 +143,7 @@ class LedServer():
 		while (gefunden < anzahl):
 			i = randint(0,63)
 			if ((self.neu[i][0] == 0) and (self.neu[i][1] == 0) and (self.neu[i][2] == 0)):
-				self.neu[i] = list(farben.values())[randint(2,len(farben)-2)]
+				self.neu[i] = list(farben.values())[randint(2,len(farben)-1)]
 				gefunden += 1
 			else:
 				fehler += 1
@@ -89,6 +165,7 @@ class LedServer():
 		self.fade()
 	
 	def test(self, args):
+		self.state = states["test"]
 		print("test: ", args)
 		if (args.find("off") != -1):
 			self.off()
@@ -106,6 +183,8 @@ class LedServer():
 						color = int(sub[1])
 						if (color < len(farben)):
 							self.farbe(list(farben.values())[color])
+						else:
+							self.farbe(farben["off"])
 
 				elif (sub[0] == "single"):
 					colors = sub[1].split(",")
@@ -118,6 +197,8 @@ class LedServer():
 						color = int(sub[1])
 						if (color < len(farben)):
 							self.single(list(farben.values())[color])
+						else:
+							self.single(farben["off"])
 				elif (sub[0] == "zufall"):
 					anzahl = int(sub[1])
 					self.zufall(anzahl)
@@ -131,6 +212,11 @@ class LedServer():
 		
 	def led(self, args):
 		print("led: ", args)
+		if args in states:
+			self.state = states[args]
+		else:
+			print("Fehler in 'led' argument")
+			self.state = states["off"]
 	
 	def parse(self, url):
 		if (url[:1] == "/"):

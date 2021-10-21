@@ -1,5 +1,6 @@
 import ledserver
 import time
+import blinkled
 
 from http.server	import BaseHTTPRequestHandler, HTTPServer
 from threading		import Thread
@@ -46,3 +47,7 @@ ledThread.start()
 web = HTTPServer((hostName, serverPort), WebServer)
 webThread = Thread(target = web.serve_forever)
 webThread.start()
+
+blink = blinkled.Blinker()
+blinkThread = Thread(target = blink.run)
+blinkThread.start()
