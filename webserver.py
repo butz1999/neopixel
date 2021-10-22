@@ -1,12 +1,24 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-class WebServer(HTTPServer):
-	def start(self, name):
-		self.name = name
-		print(name)
-		serve_forever()
+class webServer:
+	def __init__(self, queue):
+		self.serverPort = 8080
+		self.hostName = ""
+		self.queue = queue
+		def handler(*args):
+			webHandler(queue, *args)
+		self.server = HTTPServer((self.hostName, self.serverPort), handler)
 
-class WebHandler(BaseHTTPRequestHandler):
+	def run(self):
+		self.server.serve_forever()
+		
+class webHandler(BaseHTTPRequestHandler):
+	queue = None
+	
+	def __init__(self, queue, *args):
+		self.queue = queue
+		BaseHTTPRequestHandler.__init__(self, *args)
+	
 	def do_GET(self):
 		self.send_response(200)
 		self.send_header("Content-type", "text/html")
@@ -16,8 +28,7 @@ class WebHandler(BaseHTTPRequestHandler):
 		self.wfile.write(bytes("<body>", "utf-8"))
 		self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
 		self.wfile.write(bytes("</body></html>", "utf-8"))
-		self.queue.put(self.path)
-
-	def setQueue(self, queue):
-		self.queue = queue
+		if (self.path != "/favicon.ico"):
+			print("Sent: ", self.path)
+			self.queue.put(self.path)
 

@@ -1,4 +1,5 @@
 import ledserver
+import webserver
 import time
 import blinkled
 from http.server	import BaseHTTPRequestHandler, HTTPServer
@@ -18,26 +19,9 @@ farben = {
 	"hellgrün":	(30,255,10),
 	}
 
-serverPort = 8080
-hostName = ""
 
 cmdQueue = Queue()
 
-class WebServer(BaseHTTPRequestHandler):
-
-	def do_GET(self):
-		self.send_response(200)
-		self.send_header("Content-type", "text/html")
-		self.end_headers()
-		self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
-		self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
-		self.wfile.write(bytes("<body>", "utf-8"))
-		self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
-		self.wfile.write(bytes("</body></html>", "utf-8"))
-		if (self.path != "/favicon.ico"):
-			print("Sent: ", self.path)
-			cmdQueue.put(self.path)
-        
 blink = blinkled.Blinker()
 blinkThread = Thread(target = blink.run)
 blinkThread.start()
@@ -46,7 +30,8 @@ led = ledserver.LedServer(blink)
 ledThread = Thread(target = led.start, args = ("LedServer", cmdQueue))
 ledThread.start()
 
-web = HTTPServer((hostName, serverPort), WebServer)
-webThread = Thread(target = web.serve_forever)
+web = webserver.webServer(cmdQueue)
+webThread = Thread(target = web.run)
 webThread.start()
 
+cmdQueue.put("/led/idle")

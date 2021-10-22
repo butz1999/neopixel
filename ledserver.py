@@ -42,7 +42,9 @@ class LedServer():
 		self.state = states["off"]
 		self.runner = Thread(target = self.run)
 		self.runner.start()
-		self.count = 16
+		self.low    = 8
+		self.normal = 16
+		self.intense = 48
 		self.intervall = 4
 		self.blinker = blinker
 		self.blinker.setLock1(False)
@@ -65,43 +67,43 @@ class LedServer():
 					self.neu = [(0,0,0)] * 64
 					self.fade()
 				if (self.state == states["idle"]):
-					self.zufall(self.count)
+					self.zufall(self.normal)
 					self.fade()
 				if (self.state == states["user"]):
-					self.farbauswahl( farben["blue"], 64-self.count)
+					self.farbauswahl( farben["blue"], self.intense)
 					self.fade(0)
-					self.farbauswahl( farben["blue"], self.count)
+					self.farbauswahl( farben["blue"], self.low)
 					self.fade(0)
 					self.intervall = 1.5
 				if (self.state == states["setup"]):
-					self.farbauswahl( farben["violet"], self.count)
+					self.farbauswahl( farben["violet"], self.normal)
 					self.fade()
 					self.intervall = 4
 				if (self.state == states["ok"]):
-					self.farbauswahl( farben["green"], self.count)
+					self.farbauswahl( farben["green"], self.normal)
 					self.fade()
 					self.intervall = 4
 				if (self.state == states["warning"]):
-					self.farbauswahl( farben["yellow"], self.count)
+					self.farbauswahl( farben["yellow"], self.normal)
 					self.fade()
 					self.intervall = 4
 				if (self.state == states["error"]):
-					self.farbauswahl( farben["red"], 64-self.count)
+					self.farbauswahl( farben["red"], self.intense)
 					self.fade(0)
-					self.farbauswahl( farben["red"], self.count)
+					self.farbauswahl( farben["red"], self.low)
 					self.fade(0)
 					self.intervall = 1.5
 				if (self.state == states["pos"]):
-					self.farbauswahl( farben["green"], 64-self.count )
+					self.farbauswahl( farben["green"], self.intense)
 					self.fade(0)
-					self.farbauswahl( farben["green"], self.count )
+					self.farbauswahl( farben["green"], self.normal)
 					self.fade(0)
 					oldstate = states["ok"]
 					self.state = states["ok"]
 				if (self.state == states["neg"]):
-					self.farbauswahl( farben["yellow"], 64-self.count )
+					self.farbauswahl( farben["yellow"], self.intense)
 					self.fade(0)
-					self.farbauswahl( farben["yellow"], self.count )
+					self.farbauswahl( farben["yellow"], self.normal)
 					self.fade(0)
 					oldstate = states["warning"]
 					self.state = states["warning"]
