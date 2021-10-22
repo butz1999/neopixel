@@ -4,7 +4,6 @@ class webServer:
 	def __init__(self, queue):
 		self.serverPort = 8080
 		self.hostName = ""
-		self.queue = queue
 		def handler(*args):
 			webHandler(queue, *args)
 		self.server = HTTPServer((self.hostName, self.serverPort), handler)

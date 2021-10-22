@@ -34,8 +34,11 @@ states = {
 	}
 
 class LedServer():
-	def __init__(self, blinker):
+	def __init__(self, cmdQueue, blinker):
 		print("Led server constructor called")
+		self.queue = cmdQueue
+		self.blinker = blinker
+
 		self.pixels = neopixel.NeoPixel(board.D18, 64, bpp=3, brightness=1.0, auto_write=False, pixel_order=neopixel.GRB)
 		self.neu = [(0,0,0)] * 64
 		self.alt = [(0,0,0)] * 64
@@ -46,7 +49,6 @@ class LedServer():
 		self.normal = 16
 		self.intense = 48
 		self.intervall = 4
-		self.blinker = blinker
 		self.blinker.setLock1(False)
 		self.blinker.setLock2(False)
 		
@@ -57,56 +59,54 @@ class LedServer():
 		self.off()
 		again = False
 		while True:
-			if (time.time() > oldtime + self.intervall):
-				again = True
-			if (self.state != oldstate or again):
+			if ((self.state != oldstate) or (time.time() > oldtime + self.intervall)):
 				oldstate = self.state
-				
-				again = False
 				if (self.state == states["off"]):
 					self.neu = [(0,0,0)] * 64
 					self.fade()
-				if (self.state == states["idle"]):
+				elif (self.state == states["idle"]):
 					self.zufall(self.normal)
 					self.fade()
-				if (self.state == states["user"]):
+				elif (self.state == states["user"]):
 					self.farbauswahl( farben["blue"], self.intense)
 					self.fade(0)
 					self.farbauswahl( farben["blue"], self.low)
 					self.fade(0)
 					self.intervall = 1.5
-				if (self.state == states["setup"]):
+				elif (self.state == states["setup"]):
 					self.farbauswahl( farben["violet"], self.normal)
 					self.fade()
 					self.intervall = 4
-				if (self.state == states["ok"]):
+				elif (self.state == states["ok"]):
 					self.farbauswahl( farben["green"], self.normal)
 					self.fade()
 					self.intervall = 4
-				if (self.state == states["warning"]):
+				elif (self.state == states["warning"]):
 					self.farbauswahl( farben["yellow"], self.normal)
 					self.fade()
 					self.intervall = 4
-				if (self.state == states["error"]):
+				elif (self.state == states["error"]):
 					self.farbauswahl( farben["red"], self.intense)
 					self.fade(0)
 					self.farbauswahl( farben["red"], self.low)
 					self.fade(0)
 					self.intervall = 1.5
-				if (self.state == states["pos"]):
+				elif (self.state == states["pos"]):
 					self.farbauswahl( farben["green"], self.intense)
 					self.fade(0)
 					self.farbauswahl( farben["green"], self.normal)
 					self.fade(0)
 					oldstate = states["ok"]
 					self.state = states["ok"]
-				if (self.state == states["neg"]):
+				elif (self.state == states["neg"]):
 					self.farbauswahl( farben["yellow"], self.intense)
 					self.fade(0)
 					self.farbauswahl( farben["yellow"], self.normal)
 					self.fade(0)
 					oldstate = states["warning"]
 					self.state = states["warning"]
+				else:
+					print("Unbekannter Fehler in der Statemachine!")
 				oldtime = time.time()
 			time.sleep(0.01)
 		
@@ -186,10 +186,72 @@ class LedServer():
 		self.neu[35] = farbe
 		self.fade()
 	
+	def ch(self):
+		rt = (128,0,0)
+		ws = (128,128,128)
+		
+		flagge = [ 
+			rt, rt, rt, rt, rt, rt, rt, rt,
+			rt, rt, rt, ws, ws, rt, rt, rt,
+			rt, rt, rt, ws, ws, rt, rt, rt,
+			rt, ws, ws, ws, ws, ws, ws, rt,
+			rt, ws, ws, ws, ws, ws, ws, rt,
+			rt, rt, rt, ws, ws, rt, rt, rt,
+			rt, rt, rt, ws, ws, rt, rt, rt,
+			rt, rt, rt, rt, rt, rt, rt, rt
+			]
+			
+		self.neu = flagge
+		self.fade()
+		
+	def de(self):
+		rt = (128,0,0)
+		rg = (128,32,0)
+		ge = (110,64,0)
+		sw = (0,0,0)
+		sr = (30,0,0)
+		
+		flagge = [
+			sw, sw, sr, rt, rt, rg, ge, ge,
+			ge, ge, rg, rt, rt, sr, sw, sw,
+			sw, sw, sr, rt, rt, rg, ge, ge,
+			ge, ge, rg, rt, rt, sr, sw, sw,
+			sw, sw, sr, rt, rt, rg, ge, ge,
+			ge, ge, rg, rt, rt, sr, sw, sw,
+			sw, sw, sr, rt, rt, rg, ge, ge,
+			ge, ge, rg, rt, rt, sr, sw, sw,
+			]
+		self.neu = flagge
+		self.fade()
+		
+	def us(self):
+		rt = (128,0,0)
+		ws = (128,128,128)
+		bl = (0,0,128)
+		
+		flagge = [
+			bl, bl, bl, bl, ws, rt, ws, rt,
+			rt, ws, rt, ws, bl, bl, bl, bl,
+			bl, bl, bl, bl, ws, rt, ws, rt,
+			rt, ws, rt, ws, bl, bl, bl, bl,
+			ws, rt, ws, rt, ws, rt, ws, rt,
+			rt, ws, rt, ws, rt, ws, rt, ws,
+			ws, rt, ws, rt, ws, rt, ws, rt,
+			rt, ws, rt, ws, rt, ws, rt, ws,
+		]
+		self.neu = flagge
+		self.fade()
+	
 	def test(self, args):
 		self.state = states["test"]
 		if (args.find("off") != -1):
 			self.off()
+		elif (args.find("ch") != -1):
+			self.ch()
+		elif (args.find("de") != -1):
+			self.de()
+		elif (args.find("us") != -1):
+			self.us()
 		else:
 			sub = args.split("/",1)
 			if (len(sub) == 2):
@@ -246,33 +308,29 @@ class LedServer():
 		state  = arg[1]
 		if (sensor == "waste"):
 			if (state == "release"):
-				self.blinker.setLock1(True)
+				self.blinker.wasteRelease()
 			elif (state == "off"):
-				self.blinker.setLock1(False)
+				self.blinker.wasteOff()
 			else:
-				self.blinker.setLock1(False)
+				self.blinker.wasteOff()
 		elif (sensor == "reagent"):
 			if (state == "release"):
-				self.blinker.setLock2(True)
+				self.blinker.reagentRelease()
 			elif (state == "off"):
-				self.blinker.setLock2(False)
+				self.blinker.reagentOff()
 			else:
-				self.blinker.setLock2(False)
+				self.blinker.reagentOff()
 	
 	def drawer(self, args):
 		print("drawer: ", args)
 		if (args == "in"):
-			self.blinker.setDrawer2(False)
-			self.blinker.setDrawer1(True)
+			self.blinker.drawerIn()
 		elif (args == "out"):
-			self.blinker.setDrawer1(False)
-			self.blinker.setDrawer2(True)
+			self.blinker.drawerOut()
 		elif (args == "off"):
-			self.blinker.setDrawer1(False)
-			self.blinker.setDrawer2(False)
+			self.blinker.drawerOff()
 		else:
-			self.blinker.setDrawer1(False)
-			self.blinker.setDrawer2(False)
+			self.blinker.drawerOff()
 	
 	def parse(self, url):
 		if (url[:1] == "/"):
@@ -299,9 +357,9 @@ class LedServer():
 		
 		
 
-	def start(self, name, cmdQueue):
+	def start(self):
 		print("LedServer started")
 		while True:
-			url = cmdQueue.get()
+			url = self.queue.get()
 			print("Received: ", url)
 			self.parse(url)
