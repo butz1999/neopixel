@@ -1,7 +1,6 @@
 import ledserver
 import time
 import blinkled
-
 from http.server	import BaseHTTPRequestHandler, HTTPServer
 from threading		import Thread
 from queue			import Queue
@@ -39,8 +38,11 @@ class WebServer(BaseHTTPRequestHandler):
 			print("Sent: ", self.path)
 			cmdQueue.put(self.path)
         
+blink = blinkled.Blinker()
+blinkThread = Thread(target = blink.run)
+blinkThread.start()
 
-led = ledserver.LedServer()
+led = ledserver.LedServer(blink)
 ledThread = Thread(target = led.start, args = ("LedServer", cmdQueue))
 ledThread.start()
 
@@ -48,6 +50,3 @@ web = HTTPServer((hostName, serverPort), WebServer)
 webThread = Thread(target = web.serve_forever)
 webThread.start()
 
-blink = blinkled.Blinker()
-blinkThread = Thread(target = blink.run)
-blinkThread.start()

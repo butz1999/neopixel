@@ -29,8 +29,10 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 
 # Multithreading
 * Beispiel: https://www.tutorialspoint.com/python/python_multithreading.htm
+* Repetitive Timer: https://stackoverflow.com/questions/12435211/python-threading-timer-repeat-function-every-n-seconds
 
 # Verdrahtung
 * Rhaspi mit Neopixel: https://learn.adafruit.com/neopixels-on-raspberry-pi/raspberry-pi-wiring
 * Detail gross: https://learn.adafruit.com/assets/64121
+* Raspi Pinout: https://learn.sparkfun.com/tutorials/raspberry-gpio/gpio-pinout
 * BoxTec Level Konverter: https://shop.boxtec.ch/logic-level-converter-directional-p-41728.html

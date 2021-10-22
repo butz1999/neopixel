@@ -1,6 +1,7 @@
 import board
 import digitalio
 import neopixel
+import blinkled
 import time
 import sys
 from random	import *
@@ -33,7 +34,7 @@ states = {
 	}
 
 class LedServer():
-	def __init__(self):
+	def __init__(self, blinker):
 		print("Led server constructor called")
 		self.pixels = neopixel.NeoPixel(board.D18, 64, bpp=3, brightness=1.0, auto_write=False, pixel_order=neopixel.GRB)
 		self.neu = [(0,0,0)] * 64
@@ -41,9 +42,12 @@ class LedServer():
 		self.state = states["off"]
 		self.runner = Thread(target = self.run)
 		self.runner.start()
-		self.count = 10
+		self.count = 16
 		self.intervall = 4
-
+		self.blinker = blinker
+		self.blinker.setLock1(False)
+		self.blinker.setLock2(False)
+		
 	
 	def run(self):
 		oldstate = states["off"]
@@ -232,6 +236,41 @@ class LedServer():
 		else:
 			print("Fehler in 'led' argument")
 			self.state = states["off"]
+			
+	def lock(self, args):
+		print("lock: ", args)
+		arg = args.split("/")
+		sensor = arg[0]
+		state  = arg[1]
+		if (sensor == "waste"):
+			if (state == "release"):
+				self.blinker.setLock1(True)
+			elif (state == "off"):
+				self.blinker.setLock1(False)
+			else:
+				self.blinker.setLock1(False)
+		elif (sensor == "reagent"):
+			if (state == "release"):
+				self.blinker.setLock2(True)
+			elif (state == "off"):
+				self.blinker.setLock2(False)
+			else:
+				self.blinker.setLock2(False)
+	
+	def drawer(self, args):
+		print("drawer: ", args)
+		if (args == "in"):
+			self.blinker.setDrawer2(False)
+			self.blinker.setDrawer1(True)
+		elif (args == "out"):
+			self.blinker.setDrawer1(False)
+			self.blinker.setDrawer2(True)
+		elif (args == "off"):
+			self.blinker.setDrawer1(False)
+			self.blinker.setDrawer2(False)
+		else:
+			self.blinker.setDrawer1(False)
+			self.blinker.setDrawer2(False)
 	
 	def parse(self, url):
 		if (url[:1] == "/"):
@@ -244,8 +283,14 @@ class LedServer():
 			
 			if (cmd[0] == "test"):
 				self.test(cmd[1])
-			if (cmd[0] == "led"):
+			elif (cmd[0] == "led"):
 				self.led(cmd[1])
+			elif (cmd[0] == "lock"):
+				self.lock(cmd[1])
+			elif (cmd[0] == "drawer"):
+				self.drawer(cmd[1])
+			else:
+				print("Wrong command!")
 			
 		else:
 			print("Wrong command syntax!")
@@ -256,5 +301,5 @@ class LedServer():
 		print("LedServer started")
 		while True:
 			url = cmdQueue.get()
-			self.parse(url)
 			print("Received: ", url)
+			self.parse(url)
