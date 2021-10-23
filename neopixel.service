@@ -1,0 +1,10 @@
+[Unit]
+Description=Autostarts neopixel animation
+After=multi-user.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/pi/git/neopixel/transcriptor.py
+
+[Install]
+WantedBy=multi-user.target
+

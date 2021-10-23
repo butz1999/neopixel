@@ -3,6 +3,7 @@ import webserver
 import blinkled
 from threading		import Thread
 from queue			import Queue
+import time
 
 cmdQueue = Queue()
 
@@ -20,3 +21,5 @@ webThread.start()
 
 cmdQueue.put("/led/idle")
 
+while True:
+	time.sleep(1)

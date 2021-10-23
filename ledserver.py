@@ -64,15 +64,16 @@ class LedServer():
 				if (self.state == states["off"]):
 					self.neu = [(0,0,0)] * 64
 					self.fade()
+					self.intervall = 3600
 				elif (self.state == states["idle"]):
 					self.zufall(self.normal)
 					self.fade()
 				elif (self.state == states["user"]):
 					self.farbauswahl( farben["blue"], self.intense)
-					self.fade(0)
+					self.fade(0.25,8)
 					self.farbauswahl( farben["blue"], self.low)
-					self.fade(0)
-					self.intervall = 1.5
+					self.fade(0.25,8)
+					self.intervall = 2
 				elif (self.state == states["setup"]):
 					self.farbauswahl( farben["violet"], self.normal)
 					self.fade()
@@ -87,28 +88,28 @@ class LedServer():
 					self.intervall = 4
 				elif (self.state == states["error"]):
 					self.farbauswahl( farben["red"], self.intense)
-					self.fade(0)
+					self.fade(0.25,8)
 					self.farbauswahl( farben["red"], self.low)
-					self.fade(0)
-					self.intervall = 1.5
+					self.fade(0.25,8)
+					self.intervall = 2
 				elif (self.state == states["pos"]):
 					self.farbauswahl( farben["green"], self.intense)
-					self.fade(0)
+					self.fade(0.25,8)
 					self.farbauswahl( farben["green"], self.normal)
-					self.fade(0)
+					self.fade(0.25,8)
 					oldstate = states["ok"]
 					self.state = states["ok"]
 				elif (self.state == states["neg"]):
 					self.farbauswahl( farben["yellow"], self.intense)
-					self.fade(0)
+					self.fade(0.25,5)
 					self.farbauswahl( farben["yellow"], self.normal)
-					self.fade(0)
+					self.fade(0.25,5)
 					oldstate = states["warning"]
 					self.state = states["warning"]
 				else:
 					print("Unbekannter Fehler in der Statemachine!")
 				oldtime = time.time()
-			time.sleep(0.01)
+			time.sleep(0.05)
 		
 	def zeige(self, aktuell):
 		for i in range(len(aktuell)):
@@ -130,8 +131,8 @@ class LedServer():
 		
 		return (start_r+step_r, start_g+step_g, start_b+step_b)
 
-	def fade(self, dauer = 0.5):
-		steps = 16
+	def fade(self, dauer = 0.5, steps = 16):
+		print("Dauer:",dauer,"Steps:",steps)
 		jetzt = [ (0,0,0) ] * 64
 		self.zeige(self.alt)
 		time.sleep(dauer/steps)
@@ -156,7 +157,7 @@ class LedServer():
 				fehler += 1
 				if (fehler > 1000):
 					break
-		self.fade()
+		#self.fade()
 
 	def zufall(self,anzahl):
 		self.neu = [(0,0,0)] * 64

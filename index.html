@@ -1,0 +1,116 @@
+<html>
+	<head>
+		<style>
+			button { padding: 0.5em 1.5em 0.5em 1.5em; margin: 0.5em 0.5em }
+			body   { font: normal 12px Ubuntu, sans-serif }
+			h1     { font: bold   16px Ubuntu, sans-serif }
+			h2     { font: bold   14px Ubuntu, sans-serif }
+			h3     { font: bold   12px Ubuntu, sans-serif }
+			button { font: normal 12px Ubuntu, sans-serif }
+		</style>
+		<script>
+
+		'use strict';
+		   
+		document.addEventListener("DOMContentLoaded", function () {
+			var color = document.querySelector('#color'),
+				color_label = document.querySelector('#color_label'),
+				single = document.querySelector('#single'),
+				single_label = document.querySelector('#single_label')
+				
+			color.addEventListener('change', colorChange);
+			single.addEventListener('change', singleChange);
+			
+			const hexToRgb = hex =>
+			  hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
+						 ,(m, r, g, b) => '#' + r + r + g + g + b + b)
+				.substring(1).match(/.{2}/g)
+				.map(x => parseInt(x, 16))
+
+			function colorChange() {
+				var xmlHTTP = new XMLHttpRequest();
+				var rgb = hexToRgb(color.value);
+				var geturl = "/test/color/" + rgb;
+				console.log(geturl);
+				color_label.innerHTML = geturl;
+				xmlHTTP.open("GET", geturl, false);
+				xmlHTTP.send(null);
+				return;
+			};
+			
+			function singleChange() {
+				var xmlHTTP = new XMLHttpRequest();
+				var rgb = hexToRgb(single.value);
+				var geturl = "/test/single/" + rgb;
+				single_label.innerHTML = geturl
+				console.log(geturl);
+				xmlHTTP.open("GET", geturl, false);
+				xmlHTTP.send(null);
+				return;
+			};
+		});
+
+		</script>
+	</head>
+	<body>
+		<h2>Custom color</h2>
+		<label for="color" id="color_label">/test/color/</label>
+		<input type="color" id="color" value="#ff0000"><br/>
+		<label for="single" id="single_label">/test/single/</label>
+		<input type="color" id="single" value="#ff0000"><br/>
+				
+		<h1>Transcriptor Remote Control</h1>
+		<h2>LED commands</h2>
+		<a href="/led/off"><button>off</button></a>
+		<a href="/led/idle"><button>idle</button></a>
+		<a href="/led/user"><button>user</button></a>
+		<a href="/led/setup"><button>setup</button></a><br/>
+
+		<a href="/led/ok"><button>ok</button></a>
+		<a href="/led/warning"><button>warning</button></a>
+		<a href="/led/error"><button>error</button></a><br/>
+
+		<a href="/led/pos"><button>pos</button></a>
+		<a href="/led/neg"><button>neg</button></a><br/>
+		
+		<h2>Doorlock commands</h2>
+		<a href="/lock/waste/release"><button>waste release</button></a>
+		<a href="/lock/waste/off"><button>waste off</button></a><br/>
+		
+		<a href="/lock/reagent/release"><button>reagent release</button></a>
+		<a href="/lock/reagent/off"><button>reagent off</button></a><br/>
+		
+		<h2>Drawer commands</h2>
+		<a href="/drawer/out"><button>out</button></a>
+		<a href="/drawer/in"><button>in</button></a>
+		<a href="/drawer/off"><button>off</button></a>
+		
+		<h2>Test commands</h2>
+		<h3>Single color</h3>
+		<a href="/test/single/0"><button>0</button></a>
+		<a href="/test/single/1"><button>1</button></a>
+		<a href="/test/single/2"><button>2</button></a>
+		<a href="/test/single/3"><button>3</button></a>
+		<a href="/test/single/4"><button>4</button></a>
+		<a href="/test/single/5"><button>5</button></a>
+		<a href="/test/single/6"><button>6</button></a>
+		<a href="/test/single/7"><button>7</button></a>
+		<a href="/test/single/8"><button>8</button></a><br/>
+		
+		<a href="/test/color/0"><button>0</button></a>
+		<a href="/test/color/1"><button>1</button></a>
+		<a href="/test/color/2"><button>2</button></a>
+		<a href="/test/color/3"><button>3</button></a>
+		<a href="/test/color/4"><button>4</button></a>
+		<a href="/test/color/5"><button>5</button></a>
+		<a href="/test/color/6"><button>6</button></a>
+		<a href="/test/color/7"><button>7</button></a>
+		<a href="/test/color/8"><button>8</button></a><br/>
+		
+		<a href="/test/off"><button>off</button></a>
+		<a href="/test/ch"><button>ch</button></a>
+		<a href="/test/de"><button>de</button></a>
+		<a href="/test/us"><button>us</button></a>
+
+	</body>
+</html>
