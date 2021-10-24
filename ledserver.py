@@ -4,9 +4,12 @@ import neopixel
 import blinkled
 import time
 import sys
+import logging
 from random	import *
 from queue	import Queue
 from threading		import Thread
+
+log = logging.getLogger("webserver")
 
 farben = {
 	"off":      	(0,0,0),
@@ -35,11 +38,11 @@ states = {
 
 class LedServer():
 	def __init__(self, cmdQueue, blinker):
-		print("Led server constructor called")
+		log.info("LedServer constructor called")
 		self.queue = cmdQueue
 		self.blinker = blinker
 
-		self.pixels = neopixel.NeoPixel(board.D18, 64, bpp=3, brightness=1.0, auto_write=False, pixel_order=neopixel.GRB)
+		self.pixels = neopixel.NeoPixel(board.D12, 64, bpp=3, brightness=1.0, auto_write=False, pixel_order=neopixel.GRB)
 		self.neu = [(0,0,0)] * 64
 		self.alt = [(0,0,0)] * 64
 		self.state = states["off"]
@@ -52,7 +55,6 @@ class LedServer():
 		self.blinker.setLock1(False)
 		self.blinker.setLock2(False)
 		
-	
 	def run(self):
 		oldstate = states["off"]
 		oldtime = time.time()
@@ -60,6 +62,7 @@ class LedServer():
 		again = False
 		while True:
 			if ((self.state != oldstate) or (time.time() > oldtime + self.intervall)):
+				log.info("oldstate: " + str(oldstate) + " newstate: " + str(self.state))
 				oldstate = self.state
 				if (self.state == states["off"]):
 					self.neu = [(0,0,0)] * 64
@@ -107,9 +110,9 @@ class LedServer():
 					oldstate = states["warning"]
 					self.state = states["warning"]
 				else:
-					print("Unbekannter Fehler in der Statemachine!")
+					log.warning("ledserver: wrong state detected!")
 				oldtime = time.time()
-			time.sleep(0.05)
+			time.sleep(0.01)
 		
 	def zeige(self, aktuell):
 		for i in range(len(aktuell)):
@@ -132,7 +135,7 @@ class LedServer():
 		return (start_r+step_r, start_g+step_g, start_b+step_b)
 
 	def fade(self, dauer = 0.5, steps = 16):
-		print("Dauer:",dauer,"Steps:",steps)
+		log.info("Dauer: " + str(dauer) + " Steps: " + str(steps))
 		jetzt = [ (0,0,0) ] * 64
 		self.zeige(self.alt)
 		time.sleep(dauer/steps)
@@ -289,21 +292,21 @@ class LedServer():
 				elif (sub[0] == "off"):
 					self.off()
 				else:
-					print("test: wrong subcommand")
+					log.warning("test: wrong subcommand")
 			else:
-				print("test: wrong arguments")
+				log.warning("test: wrong arguments")
 				
 		
 	def led(self, args):
-		print("led: ", args)
+		log.info("led: " + args)
 		if args in states:
 			self.state = states[args]
 		else:
-			print("Fehler in 'led' argument")
+			log.warning("led: Wrong argument:", args)
 			self.state = states["off"]
 			
 	def lock(self, args):
-		print("lock: ", args)
+		log.info("lock: " + args)
 		arg = args.split("/")
 		sensor = arg[0]
 		state  = arg[1]
@@ -323,7 +326,7 @@ class LedServer():
 				self.blinker.reagentOff()
 	
 	def drawer(self, args):
-		print("drawer: ", args)
+		log.info("drawer:" + args)
 		if (args == "in"):
 			self.blinker.drawerIn()
 		elif (args == "out"):
@@ -331,16 +334,16 @@ class LedServer():
 		elif (args == "off"):
 			self.blinker.drawerOff()
 		else:
+			log.warning("drawer: wrong argument:", args)
 			self.blinker.drawerOff()
 	
 	def parse(self, url):
 		if (url[:1] == "/"):
 			url = url[1:]
-		print("Trimmed: ", url)
+		log.info("Trimmed: " + url)
 		cmd = url.split("/", 1)
 		if (len(cmd) == 2):
-			print("Cmd: ", cmd[0])
-			print("Arg: ", cmd[1])
+			log.info("Cmd: " + cmd[0] + " Arg: " + cmd[1])
 			
 			if (cmd[0] == "test"):
 				self.test(cmd[1])
@@ -351,16 +354,16 @@ class LedServer():
 			elif (cmd[0] == "drawer"):
 				self.drawer(cmd[1])
 			else:
-				print("Wrong command!")
+				log.warning("parse: Wrong command:", cmd[0])
 			
 		else:
-			print("Wrong command syntax!")
+			log.warning("parse: Wrong command syntax!")
 		
 		
 
 	def start(self):
-		print("LedServer started")
+		log.info("LedServer message handler started")
 		while True:
 			url = self.queue.get()
-			print("Received: ", url)
+			log.info("Received: " + url)
 			self.parse(url)

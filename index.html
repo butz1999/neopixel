@@ -1,13 +1,13 @@
 <html>
 	<head>
 		<style>
-			button { padding: 0.5em 1.5em 0.5em 1.5em; margin: 0.5em 0.5em }
-			body   { font: normal 10px Ubuntu, sans-serif }
-			h1     { font: bold   20px Ubuntu, sans-serif }
-			h2     { font: bold   16px Ubuntu, sans-serif }
-			h3     { font: bold   12px Ubuntu, sans-serif }
-			button { font: normal 12px Ubuntu, sans-serif }
-			input  { margin: 0.25em 0.25em }
+			button { margin: 5pt 2.5pt; min-width: 50px; min-height: 50px }
+			body   { font: normal 10pt Ubuntu, sans-serif }
+			h1     { font: bold   18pt Ubuntu, sans-serif }
+			h2     { font: bold   14pt Ubuntu, sans-serif }
+			h3     { font: bold   12pt Ubuntu, sans-serif }
+			button { font: normal 12pt Ubuntu, sans-serif }
+			input  { margin: 5pt 2.5pt; min-width: 50px; min-height: 50px }
 		</style>
 		<script>
 
@@ -35,6 +35,7 @@
 				console.log(geturl);
 				color_label.innerHTML = geturl;
 				color_label.setAttribute("href", geturl);
+				color_label.setAttribute("style", "padding: 0pt 10pt")
 				xmlHTTP.open("GET", geturl, false);
 				xmlHTTP.send(null);
 				return;
@@ -44,10 +45,10 @@
 				var xmlHTTP = new XMLHttpRequest();
 				var rgb = hexToRgb(single.value);
 				var geturl = "/test/single/" + rgb;
+				console.log(geturl);
 				single_label.innerHTML = geturl
 				single_label.setAttribute("href", geturl);
-
-				console.log(geturl);
+				color_label.setAttribute("style", "padding: 0pt 10pt")
 				xmlHTTP.open("GET", geturl, false);
 				xmlHTTP.send(null);
 				return;
@@ -71,11 +72,18 @@
 		<a href="/led/neg"><button>neg</button></a><br/>
 		
 		<h2>Doorlock commands</h2>
-		<a href="/lock/waste/release"><button>waste release</button></a>
-		<a href="/lock/waste/off"><button>waste off</button></a><br/>
-		
-		<a href="/lock/reagent/release"><button>reagent release</button></a>
-		<a href="/lock/reagent/off"><button>reagent off</button></a><br/>
+		<table>
+			<tr>
+				<td>Waste:</td>
+				<td><a href="/lock/waste/release"><button>release</button></a></td>
+				<td><a href="/lock/waste/off"><button>off</button></a><br/></td>
+			</tr>
+			<tr>
+				<td>Reagent:</td>
+				<td><a href="/lock/reagent/release"><button>release</button></a></td>
+				<td><a href="/lock/reagent/off"><button>off</button></a><br/></td>
+			</tr>
+		</table>		
 		
 		<h2>Drawer commands</h2>
 		<a href="/drawer/out"><button>out</button></a>
@@ -83,12 +91,14 @@
 		<a href="/drawer/off"><button>off</button></a>
 		
 		<h2>Test commands</h2>
-
+		<h3>Color selection</h3>
 		<table>
 			<tr>
 				<td>Full:</td>
 				<td>
 					<input type="color" id="color" value="#ff0000">
+				</td>
+				<td>
 					<a href=""id="color_label"></a>
 				</td>
 				<td>
@@ -107,6 +117,8 @@
 				<td>Single:</td>
 				<td>
 					<input type="color" id="single" value="#ff0000"> 
+				</td>
+				<td>
 					<a href=""id="single_label"></a><br/>
 				</td>
 				<td>

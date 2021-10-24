@@ -1,11 +1,14 @@
 import board
 import digitalio
+import logging
 from threading import Timer
 from time import sleep
 
+log = logging.getLogger("blinkled")
+
 class Blinker():
 	def __init__(self):
-		print("Blinker constructor called")
+		log.info("BlinkLED constructor called")
 		self.state = False
 		# GPIO
 		self.led  = digitalio.DigitalInOut(board.D17)
@@ -23,6 +26,7 @@ class Blinker():
 		self.drawerTimeout = 4
 		
 	def run(self):
+		log.info("blink: blink task started")
 		while True:
 			self.state = not self.state
 			self.led.value = self.state
@@ -30,18 +34,23 @@ class Blinker():
 
 	# Low level funktionen
 	def setLock1(self, value):
+		log.info("blink: setLock1")
 		self.lock1.value = value
 
 	def setLock2(self, value):
+		log.info("blink: setLock")
 		self.lock2.value = value
 
 	def setDrawer1(self, value):
+		log.info("blink: setDrawer1")
 		self.drawer1.value = value
 
 	def setDrawer2(self, value):
+		log.info("blink: setDrawer2")
 		self.drawer2.value = value
 
 	def lockOff(self):
+		log.info("blink: lockOff()")
 		self.setLock1(False)
 		self.setLock2(False)
 
