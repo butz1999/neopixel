@@ -42,73 +42,80 @@ class LedServer():
 		self.queue = cmdQueue
 		self.blinker = blinker
 
-		self.pixels = neopixel.NeoPixel(board.D12, 64, bpp=3, brightness=1.0, auto_write=False, pixel_order=neopixel.GRB)
-		self.neu = [(0,0,0)] * 64
-		self.alt = [(0,0,0)] * 64
+		self.leds = 64
+		self.pixels = neopixel.NeoPixel(board.D18, self.leds, bpp=3, brightness=1.0, auto_write=False, pixel_order=neopixel.GRB)
+		self.neu = [(0,0,0)] * self.leds
+		self.alt = [(0,0,0)] * self.leds
 		self.state = states["off"]
 		self.runner = Thread(target = self.run)
 		self.runner.start()
-		self.low    = 8
 		self.normal = 16
 		self.intense = 48
 		self.intervall = 4
+		self.pulsesteps = 10
+		self.pulsetime  = 0.1
 		self.blinker.setLock1(False)
 		self.blinker.setLock2(False)
 		
 	def run(self):
 		oldstate = states["off"]
 		oldtime = time.time()
-		self.off()
+		intervall = 0
 		again = False
 		while True:
-			if ((self.state != oldstate) or (time.time() > oldtime + self.intervall)):
+			if ((self.state != oldstate) or (time.time() > oldtime + intervall)):
 				log.info("oldstate: " + str(oldstate) + " newstate: " + str(self.state))
 				oldstate = self.state
+				if (oldstate != self.state):
+					oldtime = time.time()
 				if (self.state == states["off"]):
-					self.neu = [(0,0,0)] * 64
+					self.neu = [(0,0,0)] * self.leds
 					self.fade()
-					self.intervall = 3600
+					intervall = 3600
 				elif (self.state == states["idle"]):
 					self.zufall(self.normal)
 					self.fade()
+					intervall = 4
 				elif (self.state == states["user"]):
 					self.farbauswahl( farben["blue"], self.intense)
-					self.fade(0.25,8)
-					self.farbauswahl( farben["blue"], self.low)
-					self.fade(0.25,8)
-					self.intervall = 2
+					self.fade(self.pulsetime,self.pulsesteps)
+					self.farbauswahl( farben["blue"], self.normal)
+					self.fade(self.pulsetime,self.pulsesteps)
+					intervall = 2
 				elif (self.state == states["setup"]):
 					self.farbauswahl( farben["violet"], self.normal)
 					self.fade()
-					self.intervall = 4
+					intervall = 4
 				elif (self.state == states["ok"]):
 					self.farbauswahl( farben["green"], self.normal)
 					self.fade()
-					self.intervall = 4
+					intervall = 4
 				elif (self.state == states["warning"]):
 					self.farbauswahl( farben["yellow"], self.normal)
 					self.fade()
-					self.intervall = 4
+					intervall = 4
 				elif (self.state == states["error"]):
 					self.farbauswahl( farben["red"], self.intense)
-					self.fade(0.25,8)
-					self.farbauswahl( farben["red"], self.low)
-					self.fade(0.25,8)
-					self.intervall = 2
+					self.fade(self.pulsetime,self.pulsesteps)
+					self.farbauswahl( farben["red"], self.normal)
+					self.fade(self.pulsetime,self.pulsesteps)
+					intervall = 2
 				elif (self.state == states["pos"]):
 					self.farbauswahl( farben["green"], self.intense)
-					self.fade(0.25,8)
+					self.fade(self.pulsetime,self.pulsesteps)
 					self.farbauswahl( farben["green"], self.normal)
-					self.fade(0.25,8)
+					self.fade(self.pulsetime,self.pulsesteps)
 					oldstate = states["ok"]
 					self.state = states["ok"]
 				elif (self.state == states["neg"]):
 					self.farbauswahl( farben["yellow"], self.intense)
-					self.fade(0.25,5)
+					self.fade(self.pulsetime,self.pulsesteps)
 					self.farbauswahl( farben["yellow"], self.normal)
-					self.fade(0.25,5)
+					self.fade(self.pulsetime,self.pulsesteps)
 					oldstate = states["warning"]
 					self.state = states["warning"]
+				elif (self.state == states["test"]):
+					intervall = 3600
 				else:
 					log.warning("ledserver: wrong state detected!")
 				oldtime = time.time()
@@ -134,9 +141,9 @@ class LedServer():
 		
 		return (start_r+step_r, start_g+step_g, start_b+step_b)
 
-	def fade(self, dauer = 0.5, steps = 16):
+	def fade(self, dauer = 0.5, steps = 24):
 		log.info("Dauer: " + str(dauer) + " Steps: " + str(steps))
-		jetzt = [ (0,0,0) ] * 64
+		jetzt = [ (0,0,0) ] * self.leds
 		self.zeige(self.alt)
 		time.sleep(dauer/steps)
 		for step in range(steps):
@@ -148,11 +155,11 @@ class LedServer():
 		self.alt = self.neu.copy()
 		
 	def farbauswahl(self, farbe, anzahl):
-		self.neu = [(0,0,0)] * 64
+		self.neu = [(0,0,0)] * self.leds
 		gefunden = 0
 		fehler = 0
 		while (gefunden < anzahl):
-			i = randint(0,63)
+			i = randint(0,self.leds-1)
 			if ((self.neu[i][0] == 0) and (self.neu[i][1] == 0) and (self.neu[i][2] == 0)):
 				self.neu[i] = farbe
 				gefunden += 1
@@ -160,14 +167,13 @@ class LedServer():
 				fehler += 1
 				if (fehler > 1000):
 					break
-		#self.fade()
 
 	def zufall(self,anzahl):
-		self.neu = [(0,0,0)] * 64
+		self.neu = [(0,0,0)] * self.leds
 		gefunden = 0
 		fehler = 0
 		while (gefunden < anzahl):
-			i = randint(0,63)
+			i = randint(0,self.leds-1)
 			if ((self.neu[i][0] == 0) and (self.neu[i][1] == 0) and (self.neu[i][2] == 0)):
 				self.neu[i] = list(farben.values())[randint(2,len(farben)-1)]
 				gefunden += 1
@@ -175,37 +181,49 @@ class LedServer():
 				fehler += 1
 				if (fehler > 1000):
 					break
-		self.fade()
 
 	def off(self):
-		self.neu = [(0,0,0)] * 64
+		self.neu = [(0,0,0)] * self.leds
 		self.fade()
 
 	def farbe(self,farbe):
-		self.neu = [farbe] * 64
-		self.fade()
+		self.neu = [farbe] * self.leds
 	
 	def single(self,farbe):
-		self.neu = [(0,0,0)] * 64
+		self.neu = [(0,0,0)] * self.leds
 		self.neu[35] = farbe
-		self.fade()
+		
+	def linearisieren(self, bild):
+		linear = [(0,0,0)] * self.leds
+		
+		index=0
+		for x in range(8):
+			for y in range(8):
+				if ((x % 2) == 0):
+					#gerade spalte
+					linear[index] = bild[y][x]
+				else:
+					#ungerade spalte
+					linear[index] = bild[7-y][x]
+				index += 1
+		return linear
 	
 	def ch(self):
 		rt = (128,0,0)
 		ws = (128,128,128)
 		
 		flagge = [ 
-			rt, rt, rt, rt, rt, rt, rt, rt,
-			rt, rt, rt, ws, ws, rt, rt, rt,
-			rt, rt, rt, ws, ws, rt, rt, rt,
-			rt, ws, ws, ws, ws, ws, ws, rt,
-			rt, ws, ws, ws, ws, ws, ws, rt,
-			rt, rt, rt, ws, ws, rt, rt, rt,
-			rt, rt, rt, ws, ws, rt, rt, rt,
-			rt, rt, rt, rt, rt, rt, rt, rt
+			[rt, rt, rt, rt, rt, rt, rt, rt],
+			[rt, rt, rt, ws, ws, rt, rt, rt],
+			[rt, rt, rt, ws, ws, rt, rt, rt],
+			[rt, ws, ws, ws, ws, ws, ws, rt],
+			[rt, ws, ws, ws, ws, ws, ws, rt],
+			[rt, rt, rt, ws, ws, rt, rt, rt],
+			[rt, rt, rt, ws, ws, rt, rt, rt],
+			[rt, rt, rt, rt, rt, rt, rt, rt]
 			]
 			
-		self.neu = flagge
+		self.neu = self.linearisieren(flagge)
 		self.fade()
 		
 	def de(self):
@@ -216,16 +234,16 @@ class LedServer():
 		sr = (30,0,0)
 		
 		flagge = [
-			sw, sw, sr, rt, rt, rg, ge, ge,
-			ge, ge, rg, rt, rt, sr, sw, sw,
-			sw, sw, sr, rt, rt, rg, ge, ge,
-			ge, ge, rg, rt, rt, sr, sw, sw,
-			sw, sw, sr, rt, rt, rg, ge, ge,
-			ge, ge, rg, rt, rt, sr, sw, sw,
-			sw, sw, sr, rt, rt, rg, ge, ge,
-			ge, ge, rg, rt, rt, sr, sw, sw,
+			[sw,sw,sw,sw,sw,sw,sw,sw],
+			[sw,sw,sw,sw,sw,sw,sw,sw],
+			[sr,sr,sr,sr,sr,sr,sr,sr],
+			[rt,rt,rt,rt,rt,rt,rt,rt],
+			[rt,rt,rt,rt,rt,rt,rt,rt],
+			[rg,rg,rg,rg,rg,rg,rg,rg],
+			[ge,ge,ge,ge,ge,ge,ge,ge],
+			[ge,ge,ge,ge,ge,ge,ge,ge],
 			]
-		self.neu = flagge
+		self.neu = self.linearisieren(flagge)
 		self.fade()
 		
 	def us(self):
@@ -234,16 +252,37 @@ class LedServer():
 		bl = (0,0,128)
 		
 		flagge = [
-			bl, bl, bl, bl, ws, rt, ws, rt,
-			rt, ws, rt, ws, bl, bl, bl, bl,
-			bl, bl, bl, bl, ws, rt, ws, rt,
-			rt, ws, rt, ws, bl, bl, bl, bl,
-			ws, rt, ws, rt, ws, rt, ws, rt,
-			rt, ws, rt, ws, rt, ws, rt, ws,
-			ws, rt, ws, rt, ws, rt, ws, rt,
-			rt, ws, rt, ws, rt, ws, rt, ws,
+			[bl,bl,bl,bl,ws,ws,ws,ws],
+			[bl,bl,bl,bl,rt,rt,rt,rt],
+			[bl,bl,bl,bl,ws,ws,ws,ws],
+			[bl,bl,bl,bl,rt,rt,rt,rt],
+			[ws,ws,ws,ws,ws,ws,ws,ws],
+			[rt,rt,rt,rt,rt,rt,rt,rt],
+			[ws,ws,ws,ws,ws,ws,ws,ws],
+			[rt,rt,rt,rt,rt,rt,rt,rt],
 		]
-		self.neu = flagge
+		self.neu = self.linearisieren(flagge)
+		self.fade()
+		
+			
+	def resolve(self):
+		rt = (255,0,0)
+		dr = (30,0,0)
+		bk = (0,0,0)
+		bl = (0,0,255)
+
+		logo = [
+			[bk,bk,bk,bk,bk,bk,bk,bk],
+			[bk,bk,bk,bk,bk,bk,bk,bk],
+			[rt,rt,rt,bk,rt,rt,bk,bk],
+			[rt,bk,bk,rt,bk,bk,rt,bk],
+			[rt,bk,bk,rt,rt,rt,rt,bk],
+			[rt,bk,bk,rt,bk,bk,bk,bk],
+			[rt,bk,bk,bk,rt,rt,rt,bk],
+			[bk,bk,bk,bk,bk,bk,bk,bk],
+		]
+		
+		self.neu = self.linearisieren(logo)
 		self.fade()
 	
 	def test(self, args):
@@ -256,6 +295,8 @@ class LedServer():
 			self.de()
 		elif (args.find("us") != -1):
 			self.us()
+		elif (args.find("resolve") != -1):
+			self.resolve()
 		else:
 			sub = args.split("/",1)
 			if (len(sub) == 2):
@@ -272,6 +313,7 @@ class LedServer():
 							self.farbe(list(farben.values())[color])
 						else:
 							self.farbe(farben["off"])
+					self.fade()
 
 				elif (sub[0] == "single"):
 					colors = sub[1].split(",")
@@ -286,9 +328,12 @@ class LedServer():
 							self.single(list(farben.values())[color])
 						else:
 							self.single(farben["off"])
-				elif (sub[0] == "zufall"):
+					self.fade()
+					
+				elif (sub[0] == "random"):
 					anzahl = int(sub[1])
 					self.zufall(anzahl)
+					self.fade()
 				elif (sub[0] == "off"):
 					self.off()
 				else:

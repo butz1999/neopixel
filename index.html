@@ -7,7 +7,9 @@
 			h2     { font: bold   14pt Ubuntu, sans-serif }
 			h3     { font: bold   12pt Ubuntu, sans-serif }
 			button { font: normal 12pt Ubuntu, sans-serif }
-			input  { margin: 5pt 2.5pt; min-width: 50px; min-height: 50px }
+			input#color,
+			input#single  { margin: 5pt 2.5pt; min-width: 50px; min-height: 50px }
+			input#zufall  { min-width: 250px }
 		</style>
 		<script>
 
@@ -17,10 +19,13 @@
 			var color = document.querySelector('#color'),
 				color_label = document.querySelector('#color_label'),
 				single = document.querySelector('#single'),
-				single_label = document.querySelector('#single_label')
+				single_label = document.querySelector('#single_label'),
+				zufall = document.querySelector('#zufall'),
+				zufall_label = document.querySelector('#zufall_label')
 				
 			color.addEventListener('change', colorChange);
 			single.addEventListener('change', singleChange);
+			zufall.addEventListener('change', zufallChange);
 			
 			const hexToRgb = hex =>
 			  hex.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i
@@ -53,6 +58,19 @@
 				xmlHTTP.send(null);
 				return;
 			};
+			
+			function zufallChange() {
+				var xmlHTTP = new XMLHttpRequest();
+				var z = zufall.value;
+				var geturl = "/test/random/" + z;
+				console.log(geturl);
+				zufall_label.innerHTML = geturl
+				zufall_label.setAttribute("href", geturl);
+				zufall_label.setAttribute("style", "padding: 0pt 10pt")
+				xmlHTTP.open("GET", geturl, false);
+				xmlHTTP.send(null);
+				return;
+			}
 		});
 
 		</script>
@@ -134,6 +152,17 @@
 				</td>
 			</tr>
 		</table>
+		<table>
+			<tr>
+				<td>Random:</td>
+				<td>
+					<input id="zufall" type="range" min="1" max="64" value="1">
+				</td>
+				<td>
+					<a href=""id="zufall_label"></a><br/>
+				</td>
+			</tr>
+		</table>
 
 		
 		<h3>Final Joke</h3>
@@ -141,5 +170,6 @@
 		<a href="/test/ch"><button>ch</button></a>
 		<a href="/test/de"><button>de</button></a>
 		<a href="/test/us"><button>us</button></a>
+		<a href="/test/resolve"><button>resolve</button></a>
 	</body>
 </html>
