@@ -213,14 +213,14 @@ class LedServer():
 		ws = (128,128,128)
 		
 		flagge = [ 
-			[rt, rt, rt, rt, rt, rt, rt, rt],
-			[rt, rt, rt, ws, ws, rt, rt, rt],
-			[rt, rt, rt, ws, ws, rt, rt, rt],
-			[rt, ws, ws, ws, ws, ws, ws, rt],
-			[rt, ws, ws, ws, ws, ws, ws, rt],
-			[rt, rt, rt, ws, ws, rt, rt, rt],
-			[rt, rt, rt, ws, ws, rt, rt, rt],
-			[rt, rt, rt, rt, rt, rt, rt, rt]
+			[rt,rt,rt,rt,rt,rt,rt,rt],
+			[rt,rt,rt,ws,ws,rt,rt,rt],
+			[rt,rt,rt,ws,ws,rt,rt,rt],
+			[rt,ws,ws,ws,ws,ws,ws,rt],
+			[rt,ws,ws,ws,ws,ws,ws,rt],
+			[rt,rt,rt,ws,ws,rt,rt,rt],
+			[rt,rt,rt,ws,ws,rt,rt,rt],
+			[rt,rt,rt,rt,rt,rt,rt,rt]
 			]
 			
 		self.neu = self.linearisieren(flagge)
