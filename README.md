@@ -8,6 +8,14 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * GIT installieren: `sudo apt install git`
 * Hostname setzen: `sudo nano /etc/hostname`
 
+# HSE Settings
+* Zeitserver: `sudo apt install ntp`
+* Service Stoppen: `sudo service ntp stop`
+* Konfig editieren: `sudo nano /etc/ntp.conf`
+* Zeitserver hinzufügen: `timeserver 172.16.0.1`
+* Testen: `sudo ntpd -gq`
+* Starten: `sudo service ntp start` oder `reboot`
+
 # Adafruit
 * Tutorial von Adafruit: https://learn.adafruit.com/adafruit-neopixel-uberguide
 * Adafruit CircuitPython Essentials: https://learn.adafruit.com/circuitpython-essentials
