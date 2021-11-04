@@ -36,7 +36,7 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 
 # Kommunikation
 * ZMQ: https://zeromq.org/languages/python/
-* ZMQ installieren: pip3 install pyzmq
+* ZMQ installieren: `sudo pip3 install pyzmq`
 
 # Autostart
 * Start als Service: https://raspberrypi.stackexchange.com/questions/4123/running-a-python-script-at-startup
