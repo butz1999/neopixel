@@ -31,6 +31,9 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * Beispiel: https://pythonbasics.org/webserver/
 * Webserver mit Handler Instanz: https://stackoverflow.com/questions/18444395/basehttprequesthandler-with-custom-instance
 
+# Serial communication
+* Adafruit doku: https://learn.adafruit.com/circuitpython-on-raspberrypi-linux/uart-serial
+
 # Kommunikation
 * ZMQ: https://zeromq.org/languages/python/
 * ZMQ installieren: pip3 install pyzmq
