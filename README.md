@@ -7,6 +7,13 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * Python3 installieren: `sudo apt install python3`
 * GIT installieren: `sudo apt install git`
 * Hostname setzen: `sudo nano /etc/hostname`
+* Dynamisches DHCP in fixe IP: https://www.elektronik-kompendium.de/sites/raspberry-pi/1912151.htm
+
+# PC
+* Windows installieren. 
+* Statische IP setzen.
+* Chromium installieren: <link fehlt>
+* ...
 
 # HSE Settings
 * Zeitserver: `sudo apt install ntp`
