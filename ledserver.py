@@ -200,7 +200,8 @@ class LedServer():
 	
 	def single(self,farbe):
 		self.neu = [(0,0,0)] * self.leds
-		self.neu[self.leds / 2] = farbe
+		self.neu[ 8*18+9] = farbe
+		self.neu[20*18+9] = farbe
 		
 	def linearisieren(self, bild):
 		linear = [(0,0,0)] * self.leds
@@ -303,14 +304,14 @@ class LedServer():
 		self.state = states["test"]
 		if (args.find("off") != -1):
 			self.off()
-		elif (args.find("ch") != -1):
-			self.ch()
-		elif (args.find("de") != -1):
-			self.de()
-		elif (args.find("us") != -1):
-			self.us()
-		elif (args.find("resolve") != -1):
-			self.resolve()
+		#elif (args.find("ch") != -1):
+		#	self.ch()
+		#elif (args.find("de") != -1):
+		#	self.de()
+		#elif (args.find("us") != -1):
+		#	self.us()
+		#elif (args.find("resolve") != -1):
+		#	self.resolve()
 		else:
 			sub = args.split("/",1)
 			if (len(sub) == 2):
