@@ -15,7 +15,7 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * Zeitserver: `sudo apt install ntp`
 * Service Stoppen: `sudo service ntp stop`
 * Konfig editieren: `sudo nano /etc/ntp.conf`
-* Zeitserver hinzufügen: `timeserver 172.16.0.1`
+* Zeitserver hinzufügen: `server 172.16.0.1`
 * Testen: `sudo ntpd -gq`
 * Starten: `sudo service ntp start` oder `reboot`
 
