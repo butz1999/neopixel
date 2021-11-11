@@ -8,12 +8,8 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * GIT installieren: `sudo apt install git`
 * Hostname setzen: `sudo nano /etc/hostname`
 * Dynamisches DHCP in fixe IP: https://www.elektronik-kompendium.de/sites/raspberry-pi/1912151.htm
-
-# PC
-* Windows installieren. 
-* Statische IP setzen.
-* Chromium installieren: <link fehlt>
-* ...
+* DHCP deaktivieren: `sudo service dhcpcd stop`
+* Netz neu starten: `sudo service networking restart` oder Raspi neu starten: `sudo reboot`
 
 # HSE Settings
 * Zeitserver: `sudo apt install ntp`
@@ -22,6 +18,12 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * Zeitserver hinzufügen: `timeserver 172.16.0.1`
 * Testen: `sudo ntpd -gq`
 * Starten: `sudo service ntp start` oder `reboot`
+
+# PC
+* Windows installieren. 
+* Statische IP setzen.
+* Chromium installieren: <link fehlt>
+* Microsoft xy installieren: <link fehlt>
 
 # Adafruit
 * Tutorial von Adafruit: https://learn.adafruit.com/adafruit-neopixel-uberguide
