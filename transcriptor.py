@@ -1,6 +1,8 @@
 import ledserver
 import webserver
 import blinkled
+import serialM4
+
 import time
 import logging
 from threading		import Thread
@@ -16,13 +18,17 @@ logging.basicConfig(
 
 log = logging.getLogger("transcriptor")
 
-
 log.info("--------------------")
 log.info("Transcriptor started")
 log.info("--------------------")
 
+log.info("Starting Serial M4 communication")
+ser = serialM4.serialM4()
+serThread = Thread(target = ser.run)
+serThread.start()
+
 log.info("Starting Blinker")
-blink = blinkled.Blinker()
+blink = blinkled.Blinker(ser)
 blinkThread = Thread(target = blink.run)
 blinkThread.start()
 

@@ -7,8 +7,9 @@ from time import sleep
 log = logging.getLogger("blinkled")
 
 class Blinker():
-	def __init__(self):
+	def __init__(self, ser):
 		log.info("BlinkLED constructor called")
+		self.ser = ser
 		self.state = False
 		# GPIO
 		self.led  = digitalio.DigitalInOut(board.D17)
@@ -56,18 +57,21 @@ class Blinker():
 
 	# High level funktionen
 	def drawerOut(self):
+		self.ser.open()
 		self.setDrawer1(False)
 		self.setDrawer2(True)
 		self.drawerTimer = Timer(self.drawerTimeout, self.drawerOff)
 		self.drawerTimer.start()
 
 	def drawerIn(self):
+		self.ser.close()
 		self.setDrawer2(False)
 		self.setDrawer1(True)
 		self.drawerTimer = Timer(self.drawerTimeout, self.drawerOff)
 		self.drawerTimer.start()
 
 	def drawerOff(self):
+		self.ser.stop()
 		self.setDrawer1(False)
 		self.setDrawer2(False)
 
