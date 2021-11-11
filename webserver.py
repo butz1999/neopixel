@@ -1,6 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import io
 import logging
+import json
 
 log = logging.getLogger("webserver")
 
@@ -38,3 +39,12 @@ class webHandler(BaseHTTPRequestHandler):
 			log.info("Sending: " + self.path)
 			self.queue.put(self.path)
 
+	def do_POST(self):
+		path = self.path
+		length = int(self.headers["content-length"])
+		
+		self.send_response(200)
+		self.send_header("Content-type", "text/html")
+		self.end_headers()
+		data = self.rfile.read(length)
+		print(data)
