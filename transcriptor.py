@@ -5,18 +5,25 @@ import serialM4
 
 import time
 import logging
-from threading		import Thread
-from queue			import Queue
+from logging.handlers	import RotatingFileHandler
+from threading			import Thread
+from queue				import Queue
 
 cmdQueue = Queue()
 
+logfile = '/home/pi/git/neopixel/neopixel.log'
+
 logging.basicConfig(
-	filename='/home/pi/git/neopixel/neopixel.log', 
+	filename=logfile, 
 	level=logging.DEBUG,
 	format='%(asctime)s %(levelname)s %(message)s', 
 	datefmt='%Y-%m-%d %H:%M:%S')
 
 log = logging.getLogger("transcriptor")
+
+handler = RotatingFileHandler(logfile, maxBytes=5*1024*1024, backupCount=10)
+log.addHandler(handler)
+
 
 log.info("--------------------")
 log.info("Transcriptor started")
