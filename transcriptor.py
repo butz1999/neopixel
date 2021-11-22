@@ -24,7 +24,6 @@ log = logging.getLogger("transcriptor")
 handler = RotatingFileHandler(logfile, maxBytes=5*1024*1024, backupCount=10)
 log.addHandler(handler)
 
-
 log.info("--------------------")
 log.info("Transcriptor started")
 log.info("--------------------")
