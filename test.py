@@ -1,12 +1,6 @@
-def do_add(a, b):
-    return a+b
+import requests
+import time
 
-def do_sub(a, b):
-    return a-b
-
-handlers = {
-    'add': do_add,
-    'sub': do_sub,
-}
-
-print handlers["add"](1, 2)
+while True:
+    response = requests.post("http://localhost:8080/test/random/32")
+    time.sleep(1)

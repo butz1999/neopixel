@@ -10,6 +10,7 @@ from threading			import Thread
 from queue				import Queue
 
 cmdQueue = Queue()
+datQueue = Queue()
 
 logfile = '/home/pi/git/neopixel/neopixel.log'
 
@@ -39,12 +40,12 @@ blinkThread = Thread(target = blink.run)
 blinkThread.start()
 
 log.info("Starting LedServer")
-led = ledserver.LedServer(cmdQueue, blink)
+led = ledserver.LedServer(cmdQueue, datQueue, blink)
 ledThread = Thread(target = led.start)
 ledThread.start()
 
 log.info("Starting WebServer")
-web = webserver.webServer(cmdQueue)
+web = webserver.webServer(cmdQueue, datQueue)
 webThread = Thread(target = web.run)
 webThread.start()
 

@@ -37,9 +37,10 @@ states = {
 	}
 
 class LedServer():
-	def __init__(self, cmdQueue, blinker):
+	def __init__(self, cmdQueue, datQueue, blinker):
 		log.info("LedServer constructor called")
-		self.queue = cmdQueue
+		self.cmdQueue = cmdQueue
+		self.datQueue = datQueue
 		self.blinker = blinker
 
 		self.leds = 64
@@ -409,6 +410,6 @@ class LedServer():
 	def start(self):
 		log.info("LedServer message handler started")
 		while True:
-			url = self.queue.get()
+			url = self.cmdQueue.get()
 			log.info("Received: " + url)
 			self.parse(url)
