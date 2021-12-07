@@ -9,7 +9,7 @@ from random	import *
 from queue	import Queue
 from threading		import Thread
 
-log = logging.getLogger("webserver")
+#log = logging.getLogger("webserver")
 
 farben = {
 	"off":      	(0,0,0),
@@ -38,7 +38,7 @@ states = {
 
 class LedServer():
 	def __init__(self, cmdQueue, datQueue, blinker):
-		log.info("LedServer constructor called")
+		#log.info("LedServer constructor called")
 		self.cmdQueue = cmdQueue
 		self.datQueue = datQueue
 		self.blinker = blinker
@@ -65,7 +65,7 @@ class LedServer():
 		again = False
 		while True:
 			if ((self.state != oldstate) or (time.time() > oldtime + intervall)):
-				log.info("oldstate: " + str(oldstate) + " newstate: " + str(self.state))
+				#log.info("oldstate: " + str(oldstate) + " newstate: " + str(self.state))
 				oldstate = self.state
 				if (oldstate != self.state):
 					oldtime = time.time()
@@ -118,7 +118,9 @@ class LedServer():
 				elif (self.state == states["test"]):
 					intervall = 3600
 				else:
-					log.warning("ledserver: wrong state detected!")
+					"""
+					#log.warning("ledserver: wrong state detected!")
+					"""
 				oldtime = time.time()
 			time.sleep(0.01)
 		
@@ -143,7 +145,7 @@ class LedServer():
 		return (start_r+step_r, start_g+step_g, start_b+step_b)
 
 	def fade(self, dauer = 0.5, steps = 24):
-		log.info("Dauer: " + str(dauer) + " Steps: " + str(steps))
+		#log.info("Dauer: " + str(dauer) + " Steps: " + str(steps))
 		jetzt = [ (0,0,0) ] * self.leds
 		self.zeige(self.alt)
 		time.sleep(dauer/steps)
@@ -338,21 +340,25 @@ class LedServer():
 				elif (sub[0] == "off"):
 					self.off()
 				else:
-					log.warning("test: wrong subcommand")
+					"""
+					#log.warning("test: wrong subcommand")
+					"""
 			else:
-				log.warning("test: wrong arguments")
+				"""
+				#log.warning("test: wrong arguments")
+				"""
 				
 		
 	def led(self, args):
-		log.info("led: " + args)
+		#log.info("led: " + args)
 		if args in states:
 			self.state = states[args]
 		else:
-			log.warning("led: Wrong argument:", args)
+			#log.warning("led: Wrong argument:", args)
 			self.state = states["off"]
 			
 	def lock(self, args):
-		log.info("lock: " + args)
+		#log.info("lock: " + args)
 		arg = args.split("/")
 		sensor = arg[0]
 		state  = arg[1]
@@ -372,7 +378,7 @@ class LedServer():
 				self.blinker.reagentOff()
 	
 	def drawer(self, args):
-		log.info("drawer:" + args)
+		#log.info("drawer:" + args)
 		if (args == "in"):
 			self.blinker.drawerIn()
 		elif (args == "out"):
@@ -380,16 +386,16 @@ class LedServer():
 		elif (args == "off"):
 			self.blinker.drawerOff()
 		else:
-			log.warning("drawer: wrong argument:", args)
+			#log.warning("drawer: wrong argument:", args)
 			self.blinker.drawerOff()
 	
 	def parse(self, url):
 		if (url[:1] == "/"):
 			url = url[1:]
-		log.info("Trimmed: " + url)
+		#log.info("Trimmed: " + url)
 		cmd = url.split("/", 1)
 		if (len(cmd) == 2):
-			log.info("Cmd: " + cmd[0] + " Arg: " + cmd[1])
+			#log.info("Cmd: " + cmd[0] + " Arg: " + cmd[1])
 			
 			if (cmd[0] == "test"):
 				self.test(cmd[1])
@@ -400,16 +406,20 @@ class LedServer():
 			elif (cmd[0] == "drawer"):
 				self.drawer(cmd[1])
 			else:
-				log.warning("parse: Wrong command:", cmd[0])
+				"""
+				#log.warning("parse: Wrong command:", cmd[0])
+				"""
 			
 		else:
-			log.warning("parse: Wrong command syntax!")
+			"""
+			#log.warning("parse: Wrong command syntax!")
+			"""
 		
 		
 
 	def start(self):
-		log.info("LedServer message handler started")
+		#log.info("LedServer message handler started")
 		while True:
 			url = self.cmdQueue.get()
-			log.info("Received: " + url)
+			#log.info("Received: " + url)
 			self.parse(url)
