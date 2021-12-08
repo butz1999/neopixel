@@ -10,6 +10,9 @@ Kolaborative Umgebung für die Feasibility Studie von Andi.
 * Dynamisches DHCP in fixe IP: https://www.elektronik-kompendium.de/sites/raspberry-pi/1912151.htm
 * DHCP deaktivieren: `sudo service dhcpcd stop`
 * Netz neu starten: `sudo service networking restart` oder Raspi neu starten: `sudo reboot`
+* Folder kreieren: `mkdir git` dann `cd git`
+* Code holen: `git clone https://github.com/butz1999/neopixel`
+* GIT Credentials speichern: `git config --global credential.helper cache` und `git config --global credential.helper 'store --file ~/.my-credentials'`
 
 # HSE Settings
 * Zeitserver: `sudo apt install ntp`
