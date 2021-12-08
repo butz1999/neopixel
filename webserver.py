@@ -49,4 +49,5 @@ class webHandler(BaseHTTPRequestHandler):
 		self.end_headers()
 		data = self.rfile.read(length)
 		self.cmdQueue.put(self.path)
+		self.datQueue.put(data)
 		print(data)

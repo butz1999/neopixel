@@ -29,7 +29,7 @@ for i in range(8):
 
 print(bmp)
 
-response = requests.post("http://localhost:8080/test/random/32", data=jdata)
+response = requests.post("http://localhost:8080/data/img", data=jdata)
 
 #while True:
 #    response = requests.post("http://localhost:8080/test/random/32")

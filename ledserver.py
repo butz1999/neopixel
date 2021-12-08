@@ -5,6 +5,7 @@ import blinkled
 import time
 import sys
 import logging
+import json
 from random	import *
 from queue	import Queue
 from threading		import Thread
@@ -347,7 +348,17 @@ class LedServer():
 				"""
 				#log.warning("test: wrong arguments")
 				"""
-				
+
+	def jsonToBitmap(self, jdata):
+		data = json.loads(jdata)
+		bmp = []
+		for i in range(8):
+			line = []
+			for j in range(8):
+				line.append(tuple(data[i][j]))
+			bmp.append(line)
+		return bmp
+
 		
 	def led(self, args):
 		#log.info("led: " + args)
@@ -389,6 +400,15 @@ class LedServer():
 			#log.warning("drawer: wrong argument:", args)
 			self.blinker.drawerOff()
 	
+	def img(self, args):
+		#log.info("img:" + args)
+		if (args == "img"):
+			jsonData = self.datQueue.get()
+			imgData = self.jsonToBitmap(jsonData)
+			print(imgData)
+			self.neu = self.linearisieren(imgData)
+			self.fade()
+	
 	def parse(self, url):
 		if (url[:1] == "/"):
 			url = url[1:]
@@ -405,6 +425,8 @@ class LedServer():
 				self.lock(cmd[1])
 			elif (cmd[0] == "drawer"):
 				self.drawer(cmd[1])
+			elif (cmd[0] == "data"):
+				self.img(cmd[1])
 			else:
 				"""
 				#log.warning("parse: Wrong command:", cmd[0])
