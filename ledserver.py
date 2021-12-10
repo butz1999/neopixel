@@ -44,18 +44,20 @@ class LedServer():
 		self.datQueue = datQueue
 		self.blinker = blinker
 
-		self.leds = 64
+		self.row  = 18
+		self.col  = 25
+		self.leds = self.row * self.col
 		self.pixels = neopixel.NeoPixel(board.D18, self.leds, bpp=3, brightness=1.0, auto_write=False, pixel_order=neopixel.GRB)
 		self.neu = [(0,0,0)] * self.leds
 		self.alt = [(0,0,0)] * self.leds
 		self.state = states["off"]
 		self.runner = Thread(target = self.run)
 		self.runner.start()
-		self.normal = 16
-		self.intense = 48
+		self.normal = self.leds / 6
+		self.intense = self.leds / 6 * 3
 		self.intervall = 4
-		self.pulsesteps = 10
-		self.pulsetime  = 0.1
+		self.pulsesteps = 25
+		self.pulsetime  = 1.0
 		self.blinker.setLock1(False)
 		self.blinker.setLock2(False)
 		
@@ -154,7 +156,7 @@ class LedServer():
 			for index in range(len(self.alt)):
 				jetzt[index] = self.colorstep(self.alt[index], self.neu[index], step, steps)
 			self.zeige(jetzt)
-			time.sleep(dauer/steps)
+			#time.sleep(dauer/steps)
 		self.zeige(self.neu)
 		self.alt = self.neu.copy()
 		
@@ -195,23 +197,33 @@ class LedServer():
 	
 	def single(self,farbe):
 		self.neu = [(0,0,0)] * self.leds
-		self.neu[35] = farbe
+		self.neu[self.leds / 2] = farbe
 		
 	def linearisieren(self, bild):
 		linear = [(0,0,0)] * self.leds
 		
+		print(bild)
+		print("Bild:  ", len(bild))
+		print("Zeile: ", len(bild[0]))
+		
 		index=0
-		for x in range(8):
-			for y in range(8):
-				if ((x % 2) == 0):
+		for col in range(self.col):
+			for row in range(self.row):
+				x=col
+				y=0
+				if ((col % 2) == 0):
 					#gerade spalte
-					linear[index] = bild[y][x]
+					y = row
 				else:
-					#ungerade spalte
-					linear[index] = bild[7-y][x]
+					#ungerade spalte umkehren
+					y = self.row-1 - row
+
+				linear[index] = bild[y][x]
+				#print(index, x, y)
 				index += 1
 		return linear
 	
+
 	def ch(self):
 		rt = (128,0,0)
 		ws = (128,128,128)
@@ -352,11 +364,13 @@ class LedServer():
 	def jsonToBitmap(self, jdata):
 		data = json.loads(jdata)
 		bmp = []
-		for i in range(8):
+		for i in range(self.row):
 			line = []
-			for j in range(8):
+			for j in range(self.col):
 				line.append(tuple(data[i][j]))
 			bmp.append(line)
+		print("Line: ", len(line))
+		print("Bmp:  ", len(bmp))
 		return bmp
 
 		
