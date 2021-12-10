@@ -35,6 +35,7 @@ states = {
 	"pos":		8,
 	"neg":	    9,
 	"test":		10,
+	"img":		11,
 	}
 
 class LedServer():
@@ -120,6 +121,8 @@ class LedServer():
 					self.state = states["warning"]
 				elif (self.state == states["test"]):
 					intervall = 3600
+				elif (self.state == states["img"]):
+					intervall = 3600
 				else:
 					"""
 					#log.warning("ledserver: wrong state detected!")
@@ -202,10 +205,6 @@ class LedServer():
 	def linearisieren(self, bild):
 		linear = [(0,0,0)] * self.leds
 		
-		print(bild)
-		print("Bild:  ", len(bild))
-		print("Zeile: ", len(bild[0]))
-		
 		index=0
 		for col in range(self.col):
 			for row in range(self.row):
@@ -219,7 +218,6 @@ class LedServer():
 					y = self.row-1 - row
 
 				linear[index] = bild[y][x]
-				#print(index, x, y)
 				index += 1
 		return linear
 	
@@ -415,11 +413,11 @@ class LedServer():
 			self.blinker.drawerOff()
 	
 	def img(self, args):
+		self.state = states["img"]
 		#log.info("img:" + args)
 		if (args == "img"):
 			jsonData = self.datQueue.get()
 			imgData = self.jsonToBitmap(jsonData)
-			print(imgData)
 			self.neu = self.linearisieren(imgData)
 			self.fade()
 	

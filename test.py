@@ -27,9 +27,8 @@ jdata = """ [
 
 data = json.loads(jdata)
 
-print(data)
-
-print(tuple(data[0][0]))
+#print(data)
+#print(tuple(data[0][0]))
 
 bmp = []
 for i in range(8):
@@ -39,7 +38,7 @@ for i in range(8):
         #print(data[i][j])
     bmp.append(line)
 
-print(bmp)
+#print(bmp)
 
 response = requests.post("http://localhost:8080/data/img", data=jdata)
 
