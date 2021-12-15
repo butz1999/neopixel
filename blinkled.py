@@ -79,6 +79,7 @@ class Blinker():
 		self.setLock1(False)
 		
 	def reagentRelease(self):
+		self.ser.reagent()
 		self.setLock1(True)
 		self.reagentTimer = Timer(self.lockTimeout, self.lockOff)
 		self.reagentTimer.start()
@@ -87,6 +88,7 @@ class Blinker():
 		self.setLock2(False)
 		
 	def wasteRelease(self):
+		self.ser.waste()
 		self.setLock2(True)
 		self.wasteTimer = Timer(self.lockTimeout, self.lockOff)
 		self.wasteTimer.start()

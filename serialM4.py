@@ -27,5 +27,11 @@ class serialM4():
 	def close(self):
 		self.cmd("c")
 	
+	def reagent(self):
+		self.cmd("r")
+
+	def waste(self):
+		self.cmd("w")
+
 	def stop(self):
 		self.cmd("s")
