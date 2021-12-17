@@ -35,3 +35,15 @@ class serialM4():
 
 	def stop(self):
 		self.cmd("s")
+
+	def inPos(self):
+		self.cmd("Q")
+	
+	def inNeg(self):
+		self.cmd("A")
+	
+	def outPos(self):
+		self.cmd("X")
+	
+	def outNeg(self):
+		self.cmd("Y")

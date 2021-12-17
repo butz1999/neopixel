@@ -409,6 +409,14 @@ class LedServer():
 			self.blinker.drawerOut()
 		elif (args == "off"):
 			self.blinker.drawerOff()
+		elif (args == "out_pos"):
+			self.blinker.drawerOutPos()
+		elif (args == "out_neg"):
+			self.blinker.drawerOutNeg()
+		elif (args == "in_pos"):
+			self.blinker.drawerInPos()
+		elif (args == "in_neg"):
+			self.blinker.drawerInNeg()
 		else:
 			#log.warning("drawer: wrong argument:", args)
 			self.blinker.drawerOff()

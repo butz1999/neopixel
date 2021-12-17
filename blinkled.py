@@ -69,6 +69,18 @@ class Blinker():
 		self.setDrawer1(True)
 		#self.drawerTimer = Timer(self.drawerTimeout, self.drawerOff)
 		#self.drawerTimer.start()
+		
+	def drawerInPos(self):
+		self.ser.inPos()
+	
+	def drawerInNeg(self):
+		self.ser.inNeg()
+		
+	def drawerOutPos(self):
+		self.ser.outPos()
+		
+	def drawerOutNeg(self):
+		self.ser.outNeg()
 
 	def drawerOff(self):
 		self.ser.stop()
